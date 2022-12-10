@@ -1,2 +1,16 @@
 ---
-# tasks file for ansible-jellyfin
+- name: Create Jellyfin Pod
+  containers.podman.podman_pod:
+    name: '{{ jellyfin_hostname }}'
+    network: '{{ jellyfin_podman_network }}'
+    ip: '{{ jellyfin_pod_ip }}'
+    hostname: '{{ jellyfin_hostname }}.{{ jellyfin_domain }}'
+    state: started
+
+- name: Create Jellyfin Systemd Unit File
+  ansible.builtin.template:
+    src: container.jellyfin.service.j2
+    dest: '/etc/systemd/system/container-{{ jellyfin_hostname }}.service'
+    owner: root
+    group: root
+    mode: '0644'

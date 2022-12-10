@@ -1,2 +1,11 @@
 ---
-# defaults file for ansible-jellyfin
+jellyfin_version: 10.8.8
+jellyfin_hostname: jellyfin
+jellyfin_domain: example.com
+jellyfin_systemd_restart_policy: on-failure
+jellyfin_systemd_timeout: 70
+jellyfin_podman_network: podman
+jellyfin_pod_ip: 10.88.10.10
+jellyfin_media_directory: /media
+jellyfin_uid: 1001
+jellyfin_gid: 1001

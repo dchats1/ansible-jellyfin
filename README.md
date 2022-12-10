@@ -1,7 +1,7 @@
-Role Name
+ansible-jellyfin
 =========
 
-A brief description of the role goes here.
+Deploy Jellyfin using Podman
 
 Requirements
 ------------

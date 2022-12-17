@@ -9,8 +9,9 @@ RequiresMountsFor=%t/containers
 Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart={{ jellyfin_systemd_restart_policy }}
 TimeoutStopSec={{ jellyfin_systemd_timeout }}
-ExecStartPre=/bin/rm -f %t/%n.ctr-id
-ExecStartPre=if ! mount | grep '/dev/sdb1 on /media' 1>/dev/null; then mount /media; fi
+ExecStartPre=/bin/rm \
+        -f %t/%n.ctr-id
+ExecStartPre=-/usr/bin/mount /media
 ExecStart=/usr/bin/podman run \
         --cidfile=%t/%n.ctr-id \
         --cgroups=no-conmon \
@@ -31,8 +32,13 @@ ExecStart=/usr/bin/podman run \
         --device /dev/dri/card0:/dev/dri/card0 \
         --mount type=bind,source={{ jellyfin_media_directory }},destination={{ jellyfin_media_directory }},ro=true \
         docker.io/jellyfin/jellyfin:{{ jellyfin_version }}
-ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
-ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+ExecStop=/usr/bin/podman stop \
+        --ignore -t 10 \
+        --cidfile=%t/%n.ctr-id
+ExecStopPost=/usr/bin/podman rm \
+        -f \
+        --ignore -t 10 \
+        --cidfile=%t/%n.ctr-id
 Type=notify
 NotifyAccess=all
 

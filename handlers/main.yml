@@ -1,2 +1,16 @@
 ---
-# handlers file for ansible-jellyfin
+- name: restart jellyfin
+  ansible.builtin.systemd:
+    name: 'container-{{ jellyfin_hostname }}.service'
+    state: restarted
+    enabled: yes
+
+- name: restart nginx
+  ansible.builtin.systemd:
+    name: container-{{ jellyfin_hostname }}-nginx.service
+    state: restarted
+    enabled: yes
+
+- name: daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: yes

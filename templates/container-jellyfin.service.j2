@@ -11,6 +11,9 @@ Restart={{ jellyfin_systemd_restart_policy }}
 TimeoutStopSec={{ jellyfin_systemd_timeout }}
 ExecStartPre=/bin/rm \
         -f %t/%n.ctr-id
+{% if jellyfin_extra_ExecStartPre is defined %}
+{{ jellyfin_extra_ExecStartPre }}
+{% endif %}
 ExecStartPre=-/usr/bin/mount /media
 ExecStart=/usr/bin/podman run \
         --cidfile=%t/%n.ctr-id \
@@ -21,13 +24,15 @@ ExecStart=/usr/bin/podman run \
         --detach \
         --label io.containers.autoupdate=registry \
         --name {{ jellyfin_hostname }} \
-        --net prod \
-        --ip 172.16.20.68 \
+        --pod {{ jellyfin_hostname }}-pod \
         --user {{ jellyfin_uid }}:{{ jellyfin_gid }} \
-        --group-add "105" \
-        --group-add "39" \
-        --volume jellyfin-cache:/cache:Z \
-        --volume jellyfin-config:/config:Z \
+        --volume {{ jellyfin_hostname }}-cache:/cache:Z \
+        --volume {{ jellyfin_hostname }}-config:/config:Z \
+{% if jellyfin_extra_args is defined %}
+{% for arg in jellyfin_extra_args %}
+        {{ arg }} \
+{% endfor %}
+{% endif %}
         --device /dev/dri/renderD128:/dev/dri/renderD128 \
         --device /dev/dri/card0:/dev/dri/card0 \
         --mount type=bind,source={{ jellyfin_media_directory }},destination={{ jellyfin_media_directory }},ro=true \

@@ -1,4 +1,8 @@
 ---
+- name: daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
 - name: restart jellyfin
   ansible.builtin.systemd:
     name: 'container-{{ jellyfin_hostname }}.service'
@@ -10,7 +14,3 @@
     name: container-{{ jellyfin_hostname }}-nginx.service
     state: restarted
     enabled: yes
-
-- name: daemon-reload
-  ansible.builtin.systemd:
-    daemon_reload: yes

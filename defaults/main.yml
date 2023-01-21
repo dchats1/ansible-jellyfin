@@ -9,3 +9,12 @@ jellyfin_pod_ip: 10.88.10.10
 jellyfin_media_directory: /media
 jellyfin_uid: 1001
 jellyfin_gid: 1001
+
+# Optional Variables:
+
+# jellyfin_extra_ExecStartPre - If you need an extra command to run before starting the container.
+# For example, making sure the media directory is mounted before the container starts
+
+# jellyfin_extra_args:
+#   - --group-add "105"
+#   - --group-add "39"

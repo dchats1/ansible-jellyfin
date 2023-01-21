@@ -14,7 +14,6 @@ ExecStartPre=/bin/rm \
 {% if jellyfin_extra_ExecStartPre is defined %}
 {{ jellyfin_extra_ExecStartPre }}
 {% endif %}
-ExecStartPre=-/usr/bin/mount /media
 ExecStart=/usr/bin/podman run \
         --cidfile=%t/%n.ctr-id \
         --cgroups=no-conmon \

@@ -1,31 +1,36 @@
 ---
-- name: Create Jellyfin Pod
+- name: Create Gitea Pod
   containers.podman.podman_pod:
-    name: '{{ jellyfin_hostname }}-pod'
-    network: '{{ jellyfin_podman_network }}'
-    ip: '{{ jellyfin_pod_ip }}'
-    hostname: '{{ jellyfin_hostname }}.{{ jellyfin_domain }}'
+    name: '{{ gitea_hostname }}-pod'
+    network: '{{ gitea_pod_network }}'
+    ip: '{{ gitea_pod_ip }}'
+    hostname: '{{ gitea_hostname }}.{{ gitea_domain }}'
     state: started
 
-- name: Create Jellyfin Systemd Unit File
+- name: Create Gitea Container Volume
+  containers.podman.podman_volume:
+    name: '{{ gitea_hostname }}-volume'
+    state: present
+
+- name: Create gitea Systemd Unit File
   ansible.builtin.template:
-    src: container-jellyfin.service.j2
-    dest: '/etc/systemd/system/container-{{ jellyfin_hostname }}.service'
+    src: container-gitea.service.j2
+    dest: '/etc/systemd/system/container-{{ gitea_hostname }}.service'
     owner: root
     group: root
     mode: '0644'
   notify:
     - daemon-reload
-    - restart jellyfin
+    - restart gitea
 
 - name: Create Nginx Container Volume
   containers.podman.podman_volume:
-    name: '{{ jellyfin_hostname }}-nginx-vol'
+    name: '{{ gitea_hostname }}-nginx-vol'
     state: present
 
 - name: Get Nginx Container Volume Info
   containers.podman.podman_volume_info:
-    name: '{{ jellyfin_hostname }}-nginx-vol'
+    name: '{{ gitea_hostname }}-nginx-vol'
   register: volume_info
 
 - name: Set Mountpoint
@@ -34,8 +39,8 @@
 
 - name: Create Nginx Config File
   ansible.builtin.template:
-    src: nginx.conf.j2
-    dest: '{{ nginx_mountpoint }}/nginx.conf'
+    src: gitea-proxy.conf.j2
+    dest: '{{ nginx_mountpoint }}/gitea-proxy.conf'
     owner: root
     group: root
     mode: '0644'
@@ -45,7 +50,7 @@
 - name: Create Nginx Systemd Unit File
   ansible.builtin.template:
     src: container-nginx.service.j2
-    dest: '/etc/systemd/system/container-{{ jellyfin_hostname }}-nginx.service'
+    dest: '/etc/systemd/system/container-{{ gitea_hostname }}-nginx.service'
     owner: root
     group: root
     mode: '0644'

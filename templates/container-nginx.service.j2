@@ -10,25 +10,25 @@ Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=/bin/rm \
-	-f %t/%n.ctr-id
+    -f %t/%n.ctr-id
 ExecStart=/usr/bin/podman run \
-	--cidfile=%t/%n.ctr-id \
-	--cgroups=no-conmon \
-	--rm \
-	--sdnotify=conmon \
-	--replace \
-	--detach \
-	--name {{ jellyfin_hostname }}-nginx \
-    --pod {{ jellyfin_hostname }}-pod \
-	-v {{ nginx_mountpoint }}/nginx.conf:/etc/nginx/nginx.conf:Z \
-    docker.io/library/nginx:latest
+    --cidfile=%t/%n.ctr-id \
+    --cgroups=no-conmon \
+    --rm \
+    --sdnotify=conmon \
+    --replace \
+    --detach \
+    --name {{ gitea_hostname }}-nginx \
+    --pod {{ gitea_hostname }}-pod \
+    -v {{ nginx_mountpoint }}/gitea-proxy.conf:/etc/nginx/conf.d/default.conf:Z \
+    docker.io/library/nginx:{{ gitea_nginx_version }}
 ExecStop=/usr/bin/podman stop \
-	--ignore -t 10 \
-	--cidfile=%t/%n.ctr-id
+    --ignore -t 10 \
+    --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm \
-	-f \
-	--ignore -t 10 \
-	--cidfile=%t/%n.ctr-id
+    -f \
+    --ignore -t 10 \
+    --cidfile=%t/%n.ctr-id
 Type=notify
 NotifyAccess=all
 
